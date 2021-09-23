@@ -19,7 +19,7 @@ def fetch_path_dict():
     loe_ann_path = os.path.join(general_path,'covid19_LST_annotations')
     loe_results = os.path.join(loe_ann_path,'results')
     path_dict = {
-        'topics_file':os.path.join(topic_results,'topic_cats.json'),
+        'topics_file':os.path.join(topic_results,'topicCats.json'),
         'altmetrics_file':os.path.join(alt_results,'altmetric_annotations.json'),
         'litcovid_updates':os.path.join(preprint_dumps,'litcovid_update_file.json'),
         'preprint_updates':os.path.join(preprint_dumps,'preprint_update_file.json'),
@@ -27,60 +27,35 @@ def fetch_path_dict():
         }
     return(path_dict)
 
-def fetch_topics(path_dict,outbreak_id):
-    with open(path_dict['topics_file']) as infile:
-        topics_dict = json.load(infile)
-    for i in range(len(topics_dict)):
-        if topics_dict[i]['_id']==outbreak_id:
-            topicinfo = topics_dict[i]
-            return(topicinfo)    
 
-def fetch_preprint_updates(path_dict,preprint_id):
-    with open(path_dict['preprint_updates'],'r') as infile:
-        preprint_dict = json.load(infile)
-    for i in range(len(preprint_dict)):
-        if preprint_dict[i]['_id']==preprint_id:
-            preprint_info = preprint_dict[i]
-            return(preprint_info)
+def fetch_annotation(path_dict,source,outbreak_id):
+    with open(path_dict[source],'r') as infile:
+        ann_dict = json.load(infile)
+    ann_info = [x for x in ann_dict if x["_id"]==outbreak_id]
+    try:
+        return(ann_info[0])
+    except:
+        return(ann_info)
 
-def fetch_reviewed_updates(path_dict,litcovid_id):
-    with open(path_dict['litcovid_updates'],'r') as infile:
-        litcovid_dict = json.load(infile)
-    for i in range(len(litcovid_dict)):
-        if litcovid_dict[i]['_id']==litcovid_id:
-            litcovid_info = litcovid_dict[i]
-            return(litcovid_info)
     
-def check_altmetrics(path_dict,outbreak_id):
-    with open(path_dict['altmetrics_file']) as infile:
-        altmetrics_dict = json.load(infile)
-    for i in range(len(altmetrics_dict)):
-        if altmetrics_dict[i]['_id']==outbreak_id:
-            altinfo = altmetrics_dict[i]
-            return(altinfo)
-
-def check_loe_anns(path_dict,outbreak_id):
-    with open(path_dict['loe_annotations']) as infile:
-        loe_dict = json.load(infile)
-    for i in range(len(loe_dict)):
-        if loe_dict[i]['_id']==outbreak_id:
-            loe_info = loe_dict[i]
-            return(loe_info)
-
 def add_anns(doc):
     path_dict = fetch_path_dict()
     ## add corrections
     if doc['@type']=='Publication':
         if 'pmid' in doc['_id']:
             ## doc is from litcovid
-            corrections = fetch_reviewed_updates(path_dict,doc['_id'])
-            loe_info = check_loe_anns(path_dict,doc['_id'])
+            corrections = fetch_annotation(path_dict,'litcovid_updates',doc['_id'])
+            loe_info = fetch_annotation(path_dict,'loe_annotations',doc['_id'])
         else:
-            corrections = fetch_preprint_updates(path_dict,doc['_id'])
-            loe_info == None
+            corrections = fetch_annotation(path_dict,'preprint_updates',doc['_id'])
+            loe_info = None
         if corrections != None:
             if 'correction' in doc.keys():  ## check if correction field already used
-                doc['correction'].append(corrections)
+                try:
+                    doc['correction'].append(corrections)
+                except:
+                    correct_object = doc['correction']
+                    doc['correction']=[correct_object,corrections]
             else:
                 doc['correction']=corrections
         if loe_info != None:
@@ -91,17 +66,18 @@ def add_anns(doc):
                 doc['citedBy'] = []
                 doc['citedBy'].append(loe_info['citedBy'])
     ## add topic_cats
-    topic_cats = fetch_topics(path_dict,doc['_id'])
+    topic_cats = fetch_annotation(path_dict,'topics_file',doc['_id'])
     if topic_cats != None:
         doc['topicCategory']=topic_cats
     ## add altmetrics
-    altinfo = check_altmetrics(path_dict,doc['_id'])
+    altinfo = fetch_annotation(path_dict,'altmetrics_file',doc['_id'])
     if altinfo != None:
         if 'evaluations' in doc.keys():
-            doc['evaluations'].append(altinfo['evaluations'][0])
+            try:
+                doc['evaluations'].append(altinfo['evaluations'][0])
+            except:
+                eval_object = doc['evaluations']
+                doc['evaluations']=[eval_object,altinfo['evaluations'][0]]
         else:
-            doc['evaluations'] = altinfo['evaluations']
-            
+            doc['evaluations'] = altinfo['evaluations']       
     return(doc)
-            
-    
