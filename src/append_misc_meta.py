@@ -38,8 +38,7 @@ def fetch_annotation(path_dict,source,outbreak_id):
         return(ann_info)
 
     
-def add_anns(doc):
-    path_dict = fetch_path_dict()
+def add_anns(path_dict,doc):
     ## add corrections
     if doc['@type']=='Publication':
         if 'pmid' in doc['_id']:
@@ -49,16 +48,16 @@ def add_anns(doc):
         else:
             corrections = fetch_annotation(path_dict,'preprint_updates',doc['_id'])
             loe_info = None
-        if corrections != None:
+        if corrections != None and len(corrections)>0 and corrections!="[]":
             if 'correction' in doc.keys():  ## check if correction field already used
                 try:
-                    doc['correction'].append(corrections)
+                    doc['correction'].append(corrections["correction"][0])
                 except:
                     correct_object = doc['correction']
-                    doc['correction']=[correct_object,corrections]
+                    doc['correction']=[correct_object,corrections["correction"][0]]
             else:
-                doc['correction']=corrections
-        if loe_info != None:
+                doc['correction']=corrections["correction"][0]
+        if loe_info != None and len(loe_info)>0 and loe_info!="[]":
             doc['evaluations'] = loe_info['evaluations']
             if 'citedBy' in doc.keys():
                 doc['citedBy'].append(loe_info['citedBy'])
@@ -67,11 +66,11 @@ def add_anns(doc):
                 doc['citedBy'].append(loe_info['citedBy'])
     ## add topic_cats
     topic_cats = fetch_annotation(path_dict,'topics_file',doc['_id'])
-    if topic_cats != None:
-        doc['topicCategory']=topic_cats
+    if topic_cats != None and len(topic_cats)>0 and topic_cats!="[]":
+        doc['topicCategory']=topic_cats['topicCategory'].replace("'","").strip("[").strip("]").split(",")
     ## add altmetrics
     altinfo = fetch_annotation(path_dict,'altmetrics_file',doc['_id'])
-    if altinfo != None:
+    if altinfo != None and len(altinfo)>0:
         if 'evaluations' in doc.keys():
             try:
                 doc['evaluations'].append(altinfo['evaluations'][0])
