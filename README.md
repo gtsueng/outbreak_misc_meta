@@ -11,10 +11,10 @@ The script (src/append_misc_meta.py) contains modules for appending additional/s
 
 ### Editing the load_annotations function
 **Example of `load_annotations()` function--before:**
->def load_annotations():
->    docs = getFigshare(ID_API, FIGSHARE_API)
->    for doc in docs:
->        yield doc
+`def load_annotations():
+    docs = getFigshare(ID_API, FIGSHARE_API)
+    for doc in docs:
+        yield doc`
 
 Get the dictionary of paths which will locate the files where the miscelleneous annotations are stored locally
  `path_dict = fetch_path_dict()`
@@ -22,18 +22,18 @@ Get the dictionary of paths which will locate the files where the miscelleneous 
 Use the `add_anns()` function to search for annotations to add to each document
 
 **Example of `load_annotations()` function--after:**
->def load_annotations():
->    path_dict = fetch_path_dict()
->    docs = getFigshare(ID_API, FIGSHARE_API)
->    for eachdoc in docs:
->        doc = add_anns(eachdoc)
->        yield doc
+`def load_annotations():
+    path_dict = fetch_path_dict()
+    docs = getFigshare(ID_API, FIGSHARE_API)
+    for eachdoc in docs:
+        doc = add_anns(eachdoc)
+        yield doc`
 
 ### Editing the mapping 
 **Example of mapping information in the `upload.py` file of a parser**
->MAP_URL = "https://raw.githubusercontent.com/SuLab/outbreak.info-resources/master/outbreak_resources_es_mapping_.json"
->MAP_VARS = ["@type", "author", "curatedBy", "date", "dateCreated", "dateModified", "datePublished", "description", "distribution", "doi", >"funding", "identifier", "isBasedOn", "keywords", "license", "name", "url"]
+`MAP_URL = "https://raw.githubusercontent.com/SuLab/outbreak.info-resources/master/outbreak_resources_es_mapping_.json"`
+`MAP_VARS = ["@type", "author", "curatedBy", "date", "dateCreated", "dateModified", "datePublished", "description", "distribution", "doi", "funding", "identifier", "isBasedOn", "keywords", "license", "name", "url"]`
 
 **Example of updated mapping information in the `upload.py` file of a parser**
->MAP_URL = "https://raw.githubusercontent.com/SuLab/outbreak.info-resources/master/outbreak_resources_es_mapping_v3.json"
->MAP_VARS = ["@type", "author", "curatedBy", "date", "dateCreated", "dateModified", "datePublished", "description", "distribution", "doi", >"funding", "identifier", "isBasedOn", "keywords", "license", "name", "url","correction","evaluations","topicCategory", "citedBy"]
+`MAP_URL = "https://raw.githubusercontent.com/SuLab/outbreak.info-resources/master/outbreak_resources_es_mapping_v3.json"`
+`MAP_VARS = ["@type", "author", "curatedBy", "date", "dateCreated", "dateModified", "datePublished", "description", "distribution", "doi",   "funding", "identifier", "isBasedOn", "keywords", "license", "name", "url","correction","evaluations","topicCategory", "citedBy"]`
