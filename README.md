@@ -3,8 +3,8 @@
 The script (src/append_misc_meta.py) contains modules for appending additional/script-derived metadata to existing outbreak.info resource parsers.
 
 ### To use:
- 1. add the `src` folder to the parser
- 2. Add the line `from src/append_misc_meta import *` somewhere near the top of the `parser.py` file
+ 1. add the `from append_misc_meta.py` file to the parser
+ 2. Add the line `from append_misc_meta import *` somewhere near the top of the `parser.py` file
  3. Edit the `load_annotations()` function of the parser (see below for details)
  4. Update the ES mapping in the `upload.py` file to use `https://raw.githubusercontent.com/outbreak-info/outbreak.info-resources/master/outbreak_resources_es_mapping_v3.json`
  5. Include properties such as `correction`,`evaluations`,`topicCategory`,`citedBy` if they are not already included in the upload.py file
