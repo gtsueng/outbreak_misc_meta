@@ -62,3 +62,37 @@ MAP_URL = "https://raw.githubusercontent.com/SuLab/outbreak.info-resources/maste
 ```
 MAP_VARS = ["@type", "author", "curatedBy", "date", "dateCreated", "dateModified", "datePublished", "description", "distribution", "doi",   "funding", "identifier", "isBasedOn", "keywords", "license", "name", "url","correction","evaluations","topicCategory", "citedBy"]
 ```
+
+## Altmetrics Appender
+The Altmetrics appender provides a set of functions for pinging the altmetrics API and formatting the returned result as schema-compliant AggregateReviews which can be added to the record for the corresponding publication using the `evaluations` property.
+
+The metadata is returned for incorporation into the doc. In other words, this script may be used similar to outbreak_misc_meta 
+
+Note that the credentials.json file contains the API key for altmetrics api and is needed to bypass rate limits, but does not provide additional data access. 
+
+### To use:
+ 1. Add the altmetric appender script from github:
+ ```
+ import pathlib
+script_path = pathlib.Path(__file__).parent.absolute()
+with open(scriptpath+'append_altmetrics.py','w+') as appendfile:
+    r = requests.get('https://raw.githubusercontent.com/gtsueng/covid_altmetrics/as_parse_script/append_altmetrics.py')
+    appendfile.write(r.text)
+    appendfile.close()
+
+from append_almetrics import *
+ ```
+ 2. Use the altmetrics appender script to pull an evaluation from altmetrics
+ ```
+ script_path = pathlib.Path(__file__).parent.absolute()
+ for eachdoc in doclist[]:
+    doi = eachdoc['doi']
+    altmetric_dict = get_altmetrics_update(script_path,doi)
+    try:
+        evaluationslist = eachdoc['evaluations']
+    except:
+        evaluationslist = []
+    evaluationslist.append(altmetric_dict)
+    eachdoc['evaluations']=evaluationslist
+    return(eachdoc)
+ ```
