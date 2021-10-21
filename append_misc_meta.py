@@ -11,8 +11,6 @@ def fetch_path_dict():
     general_path = find_gen_path()
     topic_folder = os.path.join(general_path,'topic_classifier')
     topic_results = os.path.join(topic_folder,'results')
-    alt_path = os.path.join(general_path,'covid_altmetrics')
-    alt_results = os.path.join(alt_path,'results')
     preprint_path = os.path.join(general_path,'outbreak_preprint_matcher')
     preprint_results = os.path.join(preprint_path,'results')
     preprint_dumps = os.path.join(preprint_results,'update dumps')
@@ -20,7 +18,6 @@ def fetch_path_dict():
     loe_results = os.path.join(loe_ann_path,'results')
     path_dict = {
         'topics_file':os.path.join(topic_results,'topicCats.json'),
-        'altmetrics_file':os.path.join(alt_results,'altmetric_annotations.json'),
         'litcovid_updates':os.path.join(preprint_dumps,'litcovid_update_file.json'),
         'preprint_updates':os.path.join(preprint_dumps,'preprint_update_file.json'),
         'loe_annotations':os.path.join(loe_results,'loe_annotations.json')
@@ -69,6 +66,7 @@ def add_anns(path_dict,doc):
     if topic_cats != None and len(topic_cats)>0 and topic_cats!="[]":
         topicslist=topic_cats['topicCategory'].replace("'","").strip("[").strip("]").split(",")
         doc['topicCategory']=[x.strip(" ") for x in topicslist]
+    """
     ## add altmetrics
     altinfo = fetch_annotation(path_dict,'altmetrics_file',doc['_id'])
     if altinfo != None and len(altinfo)>0:
@@ -79,5 +77,5 @@ def add_anns(path_dict,doc):
                 eval_object = doc['evaluations']
                 doc['evaluations']=[eval_object,altinfo['evaluations'][0]]
         else:
-            doc['evaluations'] = altinfo['evaluations']       
+            doc['evaluations'] = altinfo['evaluations']"""       
     return(doc)
