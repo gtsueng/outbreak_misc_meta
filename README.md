@@ -98,6 +98,8 @@ from append_almetrics import *
     return(eachdoc)
  ```
  If a doi is available use the doi:
+ Note that dois should not include trailing version numbers as those do not resolve properly
+ For example: this biorxiv doi: 10.1101/2021.10.18.464256v1 should not include the v1 in order to function properly and would properly be formatted as 10.1101/2021.10.18.464256
  ```
  script_path = pathlib.Path(__file__).parent.absolute()
  for eachdoc in doclist[]:
