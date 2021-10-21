@@ -82,12 +82,41 @@ with open(scriptpath+'append_altmetrics.py','w+') as appendfile:
 
 from append_almetrics import *
  ```
- 2. Use the altmetrics appender script to pull an evaluation from altmetrics
+ 2. Use the altmetrics appender script to pull an evaluation from altmetrics.
+ If a pmid is available use the pmid that's been parsed to the `_id` field:
+ ```
+ script_path = pathlib.Path(__file__).parent.absolute()
+ for eachdoc in doclist[]:
+    pmid = eachdoc['_id']
+    altmetric_dict = get_altmetrics_update(script_path,pmid)
+    try:
+        evaluationslist = eachdoc['evaluations']
+    except:
+        evaluationslist = []
+    evaluationslist.append(altmetric_dict)
+    eachdoc['evaluations']=evaluationslist
+    return(eachdoc)
+ ```
+ If a doi is available use the doi:
  ```
  script_path = pathlib.Path(__file__).parent.absolute()
  for eachdoc in doclist[]:
     doi = eachdoc['doi']
     altmetric_dict = get_altmetrics_update(script_path,doi)
+    try:
+        evaluationslist = eachdoc['evaluations']
+    except:
+        evaluationslist = []
+    evaluationslist.append(altmetric_dict)
+    eachdoc['evaluations']=evaluationslist
+    return(eachdoc)
+ ```
+ For NCT ClinicalTrials, use the nct id that's been parsed to the `_id` field:
+  ```
+ script_path = pathlib.Path(__file__).parent.absolute()
+ for eachdoc in doclist[]:
+    nct = eachdoc['_id']
+    altmetric_dict = get_altmetrics_update(script_path,nct)
     try:
         evaluationslist = eachdoc['evaluations']
     except:
