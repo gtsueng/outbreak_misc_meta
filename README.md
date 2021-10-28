@@ -12,9 +12,10 @@ The script (src/append_misc_meta.py) contains modules for appending additional/s
 ### Adding the append_misc_meta.py file to the parser
 The file can fall out of date if it is added manually. It's better to pull it fresh from github. This is an example of how it can be done:
 ```
+import os
 import pathlib
 script_path = pathlib.Path(__file__).parent.absolute()
-with open(scriptpath+'append_misc_meta.py','w+') as appendfile:
+with open(os.path.join(script_path,'append_misc_meta.py'),'w+') as appendfile:
     r = requests.get('https://raw.githubusercontent.com/gtsueng/outbreak_misc_meta/main/append_misc_meta.py')
     appendfile.write(r.text)
     appendfile.close()
@@ -73,9 +74,10 @@ Note that the credentials.json file contains the API key for altmetrics api and 
 ### To use:
  1. Add the altmetric appender script from github:
  ```
+ import os
  import pathlib
 script_path = pathlib.Path(__file__).parent.absolute()
-with open(scriptpath+'append_altmetrics.py','w+') as appendfile:
+with open(os.path.join(script_path,'append_altmetrics.py'),'w+') as appendfile:
     r = requests.get('https://raw.githubusercontent.com/gtsueng/covid_altmetrics/as_parse_script/append_altmetrics.py')
     appendfile.write(r.text)
     appendfile.close()
